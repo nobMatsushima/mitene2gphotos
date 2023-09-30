@@ -1,0 +1,10 @@
+# app.py
+tqdm
+python-dotenv
+
+# mitene_crawler.py
+requests
+beautifulsoup4
+
+# google_photos_uploader.py
+gphotospy
