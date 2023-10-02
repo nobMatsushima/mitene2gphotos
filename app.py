@@ -7,18 +7,7 @@ from mitene_crawler import MiteneCrawler
 from google_photos_uploader import GooglePhotosUploader
 
 def main():
-    if os.getenv('GITHUB_ACTIONS') is True:
-        try:
-            # Save Google Photos API OAuth client secret as a file.
-            with open(os.environ['GPHOTS_CLIENT_SECRET_FILENAME'], mode='wb') as f:
-                f.write(os.environ['GPHOTOS_CLIENT_SECRET_BASE64'].decode('base64'))
-            # Save Google Photos Library token as a file.
-            with open(os.environ['photoslibrary_v1.token'], mode='wb') as f:
-                f.write(os.environ['GPHOTOS_LIBRARY_TOKEN_BASE64'].decode('base64'))
-        except KeyError:
-            print(f'Please reconfirm that the client secret and the library token are correctly set on Github Secrets or Variables.')
-            exit()
-    else:
+    if not os.getenv('GITHUB_ACTIONS'):
         # Load .env file if running outside of GitHub Actions.
         load_dotenv()
     config = os.environ
@@ -29,7 +18,7 @@ def main():
     except Exception as e:
         print(f'Please reconfirm that the URL and password are correctly listed in the configuration file., Error: {e}')
         exit()
-    gphotos = GooglePhotosUploader(config['GPHOTOS_CLIENT_SECRET_FILENAME'], config['GPHOTOS_ALBUM_TITLE'])    
+    gphotos = GooglePhotosUploader('gphotos_oauth.json', config['GPHOTOS_ALBUM_TITLE'])
     
     # Pick up all unsynchronized media files from new to old
     upload_media_list = []

@@ -1,0 +1,35 @@
+name: Cron workflow
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '00 21 * * *' # Runs daily approximately at 6:00AM-JST.
+
+jobs:
+  exec_app:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run the app
+        env:
+          # App
+          MEDIA_TRANSFER_LIMIT: ${{ vars.MEDIA_TRANSFER_LIMIT }}
+          # Mitene
+          MITENE_BROWSER_URL: ${{ secrets.MITENE_BROWSER_URL }}
+          MITENE_PASSWORD: ${{ secrets.MITENE_PASSWORD }}
+          # Google Photos
+          GPHOTOS_CLIENT_SECRET_BASE64: ${{ secrets.GPHOTOS_CLIENT_SECRET_BASE64 }}
+          GPHOTOS_LIBRARY_TOKEN_BASE64: ${{ secrets.GPHOTOS_LIBRARY_TOKEN_BASE64 }}
+          GPHOTOS_ALBUM_TITLE: ${{ vars.GPHOTOS_ALBUM_TITLE }}
+        run: |
+          echo $GPHOTOS_CLIENT_SECRET_BASE64 | base64 --decode > gphotos_oauth.json
+          echo $GPHOTOS_LIBRARY_TOKEN_BASE64 | base64 --decode > photoslibrary_v1.token
+          python app.py
