@@ -15,17 +15,17 @@ def create_or_update_variable(repo, name, value=None):
     repo.create_variable(name, value)
 
 def main():
-    """Setup Secrets and Variables for Github Actions."""
+    """Setup Secrets and Variables for GitHub Actions."""
     load_dotenv()
 
     # Get Google Photos API token file ("photoslibrary_v1.token" will be created)
     authorize.init('gphotos_oauth.json')
 
-    # Create/Update Github Actions Secrets and Variables
+    # Create/Update GitHub Actions Secrets and Variables
     try:
         github_auth = Auth.Token(os.environ['GITHUB_TOKEN'])
     except Exception as e:
-        print(f'Please reconfirm that the Github token is correctly listed in .env file., Error: {e}')
+        print(f'Please reconfirm that the GitHub token is correctly listed in .env file., Error: {e}')
         exit()
     with Github(auth=github_auth) as g:
         repo = g.get_user().get_repo(os.path.basename(os.getcwd()))
